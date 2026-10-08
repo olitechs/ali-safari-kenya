@@ -24,6 +24,24 @@ python3 -m http.server 3000
 Or just open `index.html` in a browser — it only needs network access for the
 Tailwind CDN, Google Fonts, Unsplash images and the hero video.
 
+## Pages
+
+| Page | Contents |
+|---|---|
+| `index.html` | Homepage — trust, intent filter, packages, reviews, form, FAQ |
+| `tours.html` | **Tours hub** — filterable grid of all safaris, blue safaris and excursions |
+| `safari-masai-mara-signature.html` | 7-day Masai Mara + Lake Nakuru — day-by-day, inclusions, lodge hints |
+| `safari-amboseli-tsavo-coast.html` | 9-day Amboseli → Tsavo East → Diani |
+| `safari-northern-giants.html` | 5-day Samburu + Lake Nakuru (short safari) |
+| `safari-great-migration.html` | 8-day Great Migration expedition, balloon + conservancy night drive |
+| `blue-safari-watamu.html` | Watamu boat day: dolphins, coral gardens, Mida Creek + 4 excursion combos |
+| `blue-safari-malindi.html` | Malindi boat day: dhow lunch, marine reserve, Marafa + combos |
+
+Every detail page carries: itinerary (accordion/timeline), what's included **and** not included,
+lodge hints by budget (Comfort/Premium/Luxury), when-to-go, WhatsApp deep link, `TouristTrip` +
+`BreadcrumbList` JSON-LD. The language switcher's `/it/` links are placeholders for the future
+Italian site.
+
 ## Repository layout
 
 | Path | Purpose |
@@ -57,6 +75,7 @@ grep -n "SWAP:" index.html      # 13 markers
 | 1080 | Form endpoint | `data-endpoint=""` → built-in success state |
 | 1354 | Registered address | Riverside Drive, Westlands, Nairobi |
 | 1367 | Tour operator licence no. | `KTB licence no. KTPH/0417/2024` |
+| — | Italian site (`/it/` links) | language switcher points at future Italian URLs |
 
 **The two that matter most:** the phone/WhatsApp number (WhatsApp taps would
 reach a stranger) and the form endpoint (currently demo-only).
