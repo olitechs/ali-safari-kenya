@@ -57,28 +57,26 @@ Italian site.
 The page ships with realistic demo content. Find every marker with:
 
 ```bash
-grep -n "SWAP:" index.html      # 13 markers
+grep -n "SWAP:" index.html      # 7 markers
 ```
 
 | Line | Item | Current demo value |
 |---|---|---|
 | 6 | GA4 + Meta Pixel snippet | events already pushed to `dataLayer`/`fbq`; add IDs |
-| 184 | Phone number | `+254 712 345 678` |
-| 189 | WhatsApp number | same number (used in 11 links incl. `wa.me/`) |
-| 192 | Email address | `hello@alisafarikenya.com` |
-| 272 | Founding year | `2009` |
-| 367 | Memberships / ratings badges | TripAdvisor, KTF, KATO, SafariBookings, Google |
-| 419 | Happy-travellers count | `4,800+` |
-| 585 | Packages, durations & prices | 3 signature packages (`$1,890 / $2,450 / $1,240`) |
-| 802 | TripAdvisor review profile URL | generic tripadvisor.com |
-| 900 | Traveller-stories video URL | falls back to the hero MP4 |
-| 1080 | Form endpoint | `data-endpoint=""` → built-in success state |
-| 1354 | Registered address | Riverside Drive, Westlands, Nairobi |
-| 1367 | Tour operator licence no. | `KTB licence no. KTPH/0417/2024` |
+| 366 | Memberships / ratings badges | TripAdvisor, KTF, KATO, SafariBookings, Google |
+| 418 | Happy-travellers count | `4,800+` |
+| 584 | Packages, durations & prices | 3 signature packages (`$1,890 / $2,450 / $1,240`) |
+| 801 | TripAdvisor review profile URL | generic tripadvisor.com |
+| 899 | Traveller-stories video URL | falls back to the hero MP4 |
+| 1079 | Form endpoint | `data-endpoint=""` → built-in success state |
 | — | Italian site (`/it/` links) | language switcher points at future Italian URLs |
 
-**The two that matter most:** the phone/WhatsApp number (WhatsApp taps would
-reach a stranger) and the form endpoint (currently demo-only).
+**Contact details are real:** phone/WhatsApp `+254 745 043 121` and
+`sheddymae01@gmail.com`, address Watamu, Kenya, no licence number in the
+footer. All eight pages use the same values.
+
+**The one that matters most now:** the form endpoint (currently demo-only, so
+enquiries are not emailed anywhere yet).
 
 ### Enabling live form delivery
 
