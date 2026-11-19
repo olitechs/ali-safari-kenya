@@ -1076,9 +1076,9 @@ if (window.tailwind) tailwind.config = {
 
     <!-- Right: the form -->
     <div class="reveal reveal-d1 bg-white rounded-3xl border border-baobab/10 shadow-card p-6 sm:p-8 lg:p-9 relative overflow-hidden">
-      <!-- SWAP: paste your Formspree/EmailJS URL into data-endpoint on the form below -->
-      <form id="enquiryForm" action="#" method="POST" data-endpoint="" novalidate>
-        <!-- data-endpoint="" = built-in demo success state; set it to your Formspree/EmailJS URL for live delivery -->
+      <!-- Enquiries are emailed to sheddymae01@gmail.com through FormSubmit. See README ("The enquiry form") before changing these URLs. -->
+      <form id="enquiryForm" action="https://formsubmit.co/ajax/sheddymae01@gmail.com" method="POST" data-endpoint="https://formsubmit.co/ajax/sheddymae01@gmail.com" novalidate>
+        <!-- data-endpoint must match the action URL; the script posts to it with fetch so we can show the thank-you state inline -->
         <div class="grid sm:grid-cols-2 gap-4 sm:gap-5">
           <div class="sm:col-span-2">
             <label for="fName" class="block text-[13px] font-medium text-night mb-1.5">Your name <span class="text-terracotta">*</span></label>
@@ -1147,7 +1147,9 @@ if (window.tailwind) tailwind.config = {
             class="w-full rounded-xl border border-baobab/25 bg-cream/50 px-4 py-3 text-[15px] text-night placeholder:text-baobab/70 focus:border-night transition-colors resize-y"></textarea>
         </div>
 
-        <input type="text" name="_gotcha" class="hidden" tabindex="-1" aria-hidden="true" autocomplete="off">
+        <input type="text" name="_honey" class="hidden" tabindex="-1" aria-hidden="true" autocomplete="off">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         <input type="hidden" name="_subject" id="formSubject" value="New safari enquiry — alisafarikenya.com">
 
         <button type="submit" id="formSubmit" class="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-gold text-night font-semibold text-[15px] px-6 py-3.5 min-h-[52px] shadow-cta transition-all duration-300 hover:scale-105 hover:shadow-cta-hover" data-cta="form_submit">
@@ -1589,20 +1591,8 @@ if (window.tailwind) tailwind.config = {
         dates: $('#fDates').value
       });
 
-      var endpoint = form.getAttribute('data-endpoint') || '';
-      if (!endpoint){
-        /* no endpoint configured yet — show the built-in success state */
-        e.preventDefault();
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending…';
-        setTimeout(function(){
-          success.hidden = false;
-          success.scrollIntoView({behavior:'smooth', block:'center'});
-          track('form_success', {mode:'placeholder'});
-        }, 600);
-        return;
-      }
-      /* Real endpoint (Formspree/EmailJS): submit via fetch so we control the success state */
+      /* Live endpoint (FormSubmit): emails the enquiry to sheddymae01@gmail.com */
+      var endpoint = form.getAttribute('data-endpoint') || form.getAttribute('action') || '';
       e.preventDefault();
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
@@ -1611,11 +1601,13 @@ if (window.tailwind) tailwind.config = {
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
       }).then(function(res){
-        if (res.ok){
-          success.hidden = false;
-          success.scrollIntoView({behavior:'smooth', block:'center'});
-          track('form_success', {mode:'fetch'});
-        } else { throw new Error('bad response'); }
+        if (!res.ok) throw new Error('http ' + res.status);
+        return res.json().catch(function(){ return {}; });
+      }).then(function(data){
+        if (!data || String(data.success) !== 'true') throw new Error('not accepted');
+        success.hidden = false;
+        success.scrollIntoView({behavior:'smooth', block:'center'});
+        track('form_success', {mode:'fetch'});
       }).catch(function(){
         errBox.textContent = 'Something went wrong. Please try again, or message us on WhatsApp — link below.';
         errBox.classList.remove('hidden');

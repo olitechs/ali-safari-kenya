@@ -68,26 +68,40 @@ grep -n "SWAP:" index.html      # 7 markers
 | 584 | Packages, durations & prices | 3 signature packages (`$1,890 / $2,450 / $1,240`) |
 | 801 | TripAdvisor review profile URL | generic tripadvisor.com |
 | 899 | Traveller-stories video URL | falls back to the hero MP4 |
-| 1079 | Form endpoint | `data-endpoint=""` → built-in success state |
+| 1079 | Form endpoint | live — FormSubmit → `sheddymae01@gmail.com` |
 | — | Italian site (`/it/` links) | language switcher points at future Italian URLs |
 
 **Contact details are real:** phone/WhatsApp `+254 745 043 121` and
 `sheddymae01@gmail.com`, address Watamu, Kenya, no licence number in the
 footer. All eight pages use the same values.
 
-**The one that matters most now:** the form endpoint (currently demo-only, so
-enquiries are not emailed anywhere yet).
+### The enquiry form (live)
 
-### Enabling live form delivery
+The homepage form posts to FormSubmit, which emails every submission to
+`sheddymae01@gmail.com`:
 
 ```html
-<!-- index.html, enquiry form -->
-<form id="enquiryForm" action="#" method="POST" data-endpoint="" novalidate>
+<form id="enquiryForm" action="https://formsubmit.co/ajax/sheddymae01@gmail.com"
+      method="POST" data-endpoint="https://formsubmit.co/ajax/sheddymae01@gmail.com" novalidate>
 ```
 
-Paste a Formspree/EmailJS URL into `data-endpoint`. The JS submits via `fetch`
-and shows the success state; with an empty endpoint it shows the built-in
-demo success state.
+`data-endpoint` must stay identical to `action`. The script posts with `fetch`
+and reads FormSubmit's JSON reply (`{"success":"true"}`); anything else shows
+the error message and points people to WhatsApp.
+
+Hidden fields: `_honey` (spam honeypot), `_captcha=false` (no captcha widget on
+the page), `_template=table` (readable email layout), `_subject`.
+
+**One-time activation:** the first submission makes FormSubmit email
+`sheddymae01@gmail.com` an *Activate Form* link. Until that link is clicked
+every submission is refused and the form shows its error message. After
+activation, deliveries arrive in the inbox (check spam once and mark not-spam).
+No account or API key is needed. Free, unlimited submissions; reCAPTCHA is off
+because a `fetch` form cannot show the widget, so spam filtering relies on the
+honeypot plus FormSubmit's own filters.
+
+To change the receiving address, replace it in both `action` and `data-endpoint`
+and activate the new address once.
 
 ## Brand tokens (Tailwind config, top of `index.html`)
 
