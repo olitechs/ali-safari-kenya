@@ -68,40 +68,51 @@ grep -n "SWAP:" index.html      # 7 markers
 | 584 | Packages, durations & prices | 3 signature packages (`$1,890 / $2,450 / $1,240`) |
 | 801 | TripAdvisor review profile URL | generic tripadvisor.com |
 | 899 | Traveller-stories video URL | falls back to the hero MP4 |
-| 1079 | Form endpoint | live — FormSubmit → `sheddymae01@gmail.com` |
+| — | Form endpoint | emails `info@olitechs.co.ke` (Formspree ID, or the visitor's mail app until one is set) |
 | — | Italian site (`/it/` links) | language switcher points at future Italian URLs |
 
 **Contact details are real:** phone/WhatsApp `+254 745 043 121` and
 `sheddymae01@gmail.com`, address Watamu, Kenya, no licence number in the
 footer. All eight pages use the same values.
 
-### The enquiry form (live)
+### The enquiry form — delivers to `info@olitechs.co.ke`
 
-The homepage form posts to FormSubmit, which emails every submission to
-`sheddymae01@gmail.com`:
+The homepage form is addressed to `info@olitechs.co.ke`, set by `data-email`:
 
 ```html
-<form id="enquiryForm" action="https://formsubmit.co/ajax/sheddymae01@gmail.com"
-      method="POST" data-endpoint="https://formsubmit.co/ajax/sheddymae01@gmail.com" novalidate>
+<form id="enquiryForm" action="https://formspree.io/f/YOUR_FORMSPREE_FORM_ID"
+      method="POST" data-endpoint="https://formspree.io/f/YOUR_FORMSPREE_FORM_ID"
+      data-email="info@olitechs.co.ke" novalidate>
 ```
 
-`data-endpoint` must stay identical to `action`. The script posts with `fetch`
-and reads FormSubmit's JSON reply (`{"success":"true"}`); anything else shows
-the error message and points people to WhatsApp.
+It works in one of two modes, decided automatically:
 
-Hidden fields: `_honey` (spam honeypot), `_captcha=false` (no captcha widget on
-the page), `_template=table` (readable email layout), `_subject`.
+1. **Email-app mode (today, no account needed).** While the endpoint still says
+   `YOUR_FORMSPREE_FORM_ID`, pressing *Send My Request* opens the visitor's own
+   mail app with subject, name, dates, travellers, budget, interests and notes
+   already written, addressed to `info@olitechs.co.ke`. The visitor only presses
+   send. A note under the button says so, and gives the address to copy if no
+   mail app opens.
+2. **Silent mode.** Paste a real Formspree form ID into **both** `action` and
+   `data-endpoint`: the script then posts in the background and shows the
+   thank-you panel without leaving the page.
 
-**One-time activation:** the first submission makes FormSubmit email
-`sheddymae01@gmail.com` an *Activate Form* link. Until that link is clicked
-every submission is refused and the form shows its error message. After
-activation, deliveries arrive in the inbox (check spam once and mark not-spam).
-No account or API key is needed. Free, unlimited submissions; reCAPTCHA is off
-because a `fetch` form cannot show the widget, so spam filtering relies on the
-honeypot plus FormSubmit's own filters.
+`data-endpoint` must stay identical to `action`, and `data-email` is the address
+used by email-app mode.
 
-To change the receiving address, replace it in both `action` and `data-endpoint`
-and activate the new address once.
+**To switch on silent mode:** sign in at [formspree.io](https://formspree.io),
+create a form whose email is `info@olitechs.co.ke`, and copy the endpoint shown
+under *Install* — it looks like `https://formspree.io/f/abcdwxyz`. Replace
+`YOUR_FORMSPREE_FORM_ID` in the two places above. Formspree's JSON reply
+(`{"ok":true}`) is what the page waits for; any failure falls back to email-app
+mode, so an enquiry is never lost.
+
+Hidden fields: `_gotcha` (spam honeypot), `_subject` (email subject line), `page`
+(which form sent it). Formspree also filters spam on its own servers, so no
+captcha widget is shown on the page. Free plan: 50 submissions a month.
+
+To change the receiving address without a Formspree account, edit `data-email`.
+With silent mode on, the address lives on the Formspree form instead.
 
 ## Brand tokens (Tailwind config, top of `index.html`)
 

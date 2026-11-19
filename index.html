@@ -64,6 +64,11 @@ if (window.tailwind) tailwind.config = {
   *::-webkit-scrollbar{ display:none; width:0; height:0; }
   html{ scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
   body{ background:#F6F0E4; color:#0F1A14; overflow-x:hidden; }
+  /* --- Layout guard: keep everything inside the screen --- */
+  img, video, svg, iframe, table{ max-width: 100%; }
+  h1, h2, h3, p, li, a{ overflow-wrap: break-word; }
+  /* The fixed mobile action bar (sm:hidden) must never cover page content */
+  @media (max-width: 639px){ body{ padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); } }
 
   /* Scroll reveal: fade-in-up 1000ms */
   .reveal{ opacity:0; transform: translateY(2.5rem); transition: opacity 1000ms cubic-bezier(.16,1,.3,1), transform 1000ms cubic-bezier(.16,1,.3,1); will-change: opacity, transform; }
@@ -174,7 +179,8 @@ if (window.tailwind) tailwind.config = {
 </head>
 <body class="font-sans antialiased">
 
-<!-- ============ 1. TOP BAR (desktop only) ============ -->
+<!-- ============ 2. NAVIGATION ============ -->
+<header id="siteNav" class="nav-in fixed top-0 inset-x-0 z-50 transition-all duration-500">
 <div class="hidden lg:block bg-night text-white/75 text-[13px] border-b border-white/10">
   <div class="mx-auto max-w-[1280px] px-6 h-10 flex items-center justify-between gap-6">
     <div class="flex items-center gap-6">
@@ -199,9 +205,6 @@ if (window.tailwind) tailwind.config = {
     </div>
   </div>
 </div>
-
-<!-- ============ 2. NAVIGATION ============ -->
-<header id="siteNav" class="nav-in fixed top-0 inset-x-0 z-50 transition-all duration-500">
   <nav class="mx-auto max-w-[1280px] px-5 sm:px-6 h-[68px] flex items-center justify-between gap-4" aria-label="Main">
     <a href="#top" class="flex items-baseline gap-2 shrink-0" aria-label="Ali Safari Kenya — home">
       <span class="font-display text-[22px] sm:text-[26px] font-semibold text-white tracking-wide">Ali Safari Kenya</span>
@@ -1076,8 +1079,9 @@ if (window.tailwind) tailwind.config = {
 
     <!-- Right: the form -->
     <div class="reveal reveal-d1 bg-white rounded-3xl border border-baobab/10 shadow-card p-6 sm:p-8 lg:p-9 relative overflow-hidden">
-      <!-- Enquiries are emailed to sheddymae01@gmail.com through FormSubmit. See README ("The enquiry form") before changing these URLs. -->
-      <form id="enquiryForm" action="https://formsubmit.co/ajax/sheddymae01@gmail.com" method="POST" data-endpoint="https://formsubmit.co/ajax/sheddymae01@gmail.com" novalidate>
+      <!-- Enquiries go to info@olitechs.co.ke. Paste a Formspree form ID in BOTH places below to switch to silent delivery;
+           until one is set, the form opens the visitor's own email app, pre-filled and addressed to info@olitechs.co.ke. -->
+      <form id="enquiryForm" action="https://formspree.io/f/YOUR_FORMSPREE_FORM_ID" method="POST" data-endpoint="https://formspree.io/f/YOUR_FORMSPREE_FORM_ID" data-email="info@olitechs.co.ke" novalidate>
         <!-- data-endpoint must match the action URL; the script posts to it with fetch so we can show the thank-you state inline -->
         <div class="grid sm:grid-cols-2 gap-4 sm:gap-5">
           <div class="sm:col-span-2">
@@ -1147,10 +1151,9 @@ if (window.tailwind) tailwind.config = {
             class="w-full rounded-xl border border-baobab/25 bg-cream/50 px-4 py-3 text-[15px] text-night placeholder:text-baobab/70 focus:border-night transition-colors resize-y"></textarea>
         </div>
 
-        <input type="text" name="_honey" class="hidden" tabindex="-1" aria-hidden="true" autocomplete="off">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_subject" id="formSubject" value="New safari enquiry — alisafarikenya.com">
+        <input type="text" name="_gotcha" class="hidden" tabindex="-1" aria-hidden="true" autocomplete="off">
+        <input type="hidden" name="_subject" id="formSubject" value="New safari enquiry — Ali Safari Kenya website">
+        <input type="hidden" name="page" value="Homepage enquiry form">
 
         <button type="submit" id="formSubmit" class="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-full bg-gold text-night font-semibold text-[15px] px-6 py-3.5 min-h-[52px] shadow-cta transition-all duration-300 hover:scale-105 hover:shadow-cta-hover" data-cta="form_submit">
           Send My Request
@@ -1159,6 +1162,7 @@ if (window.tailwind) tailwind.config = {
 
         <p class="text-center text-[13px] text-baobab/70 mt-4">We reply within <strong class="text-night">24 hours</strong>. No obligation. No payment now.</p>
         <p id="formError" class="hidden mt-3 text-center text-[13px] text-terracotta font-medium" role="alert"></p>
+        <p id="formNote" class="hidden mt-3 text-center text-[13px] text-baobab/80 leading-relaxed" role="status"></p>
       </form>
 
       <!-- Success state -->
@@ -1384,7 +1388,7 @@ if (window.tailwind) tailwind.config = {
 <!-- ============ PERSISTENT: floating WhatsApp ============ -->
 <a id="waFloat" href="https://wa.me/254745043121?text=Hello%20Ali%20Safari%20Kenya%2C%20I%27d%20like%20a%20free%20safari%20itinerary"
    target="_blank" rel="noopener"
-   class="fixed z-40 bottom-24 lg:bottom-6 right-4 sm:right-6 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,.7)] flex items-center justify-center transition-all duration-300 hover:scale-110"
+   class="hidden sm:flex fixed z-40 bottom-24 lg:bottom-6 right-4 sm:right-6 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,.7)] flex items-center justify-center transition-all duration-300 hover:scale-110"
    aria-label="Chat with us on WhatsApp" data-cta="float_whatsapp">
   <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1s-.5-.1-.7.2-.8 1-.9 1.1-.4.2-.7 0a8.2 8.2 0 0 1-2.4-1.5 9 9 0 0 1-1.7-2.1c-.2-.3 0-.5.1-.6l.5-.6c.1-.2.2-.3.3-.5a.5.5 0 0 0 0-.5c0-.2-.7-1.6-.9-2.2s-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4A3.5 3.5 0 0 0 5.6 9c0 1.5 1.1 3 1.2 3.2a12.2 12.2 0 0 0 4.7 4.1c2.1.8 2.1.6 2.5.5a3.2 3.2 0 0 0 2.1-1.4 2.6 2.6 0 0 0 .2-1.4c-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
   <span class="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-gold border-2 border-night" aria-hidden="true"></span>
@@ -1418,6 +1422,8 @@ if (window.tailwind) tailwind.config = {
 <style>
   /* Anchor offset under fixed nav */
   section[id], main[id]{ scroll-margin-top: 84px; }
+  /* taller header on desktop: top bar (40px) + nav (68px) */
+  @media (min-width: 1024px){ section[id], main[id]{ scroll-margin-top: 124px; } }
   /* Review slide fade */
   .review-slide{ animation: slideFade .5s cubic-bezier(.16,1,.3,1); }
   @keyframes slideFade{ from{ opacity:0; transform:translateY(10px) } to{ opacity:1; transform:none } }
@@ -1573,7 +1579,7 @@ if (window.tailwind) tailwind.config = {
   if (slides.length){ show(0); auto(); }
 
   /* ---------- Enquiry form ---------- */
-  var form = $('#enquiryForm'), success = $('#formSuccess'), errBox = $('#formError'), submitBtn = $('#formSubmit');
+  var form = $('#enquiryForm'), success = $('#formSuccess'), errBox = $('#formError'), formNote = $('#formNote'), submitBtn = $('#formSubmit');
   if (form){
     form.addEventListener('submit', function(e){
       errBox.classList.add('hidden');
@@ -1591,9 +1597,37 @@ if (window.tailwind) tailwind.config = {
         dates: $('#fDates').value
       });
 
-      /* Live endpoint (FormSubmit): emails the enquiry to sheddymae01@gmail.com */
+      /* Delivery: Formspree once a form ID is pasted in, otherwise the visitor's email app
+         opens pre-filled and addressed to info@olitechs.co.ke, so no enquiry is ever lost. */
       var endpoint = form.getAttribute('data-endpoint') || form.getAttribute('action') || '';
+      var mailTo = form.getAttribute('data-email') || 'info@olitechs.co.ke';
+      var labels = { name:'Name', email:'Email', phone:'WhatsApp / phone', dates:'Travel dates',
+                     travellers:'Travellers', budget:'Budget', travelling_as:'Travelling as', message:'Notes' };
+      var configured = endpoint.indexOf('YOUR_FORMSPREE_FORM_ID') === -1;
+
+      function sendByEmailApp(){
+        var data = new FormData(form), lines = [], interests = [];
+        data.forEach(function(value, key){
+          if (key.charAt(0) === '_' || key === 'page') return;
+          if (key === 'interests'){ if (value) interests.push(value); return; }
+          var v = String(value || '').trim();
+          if (v) lines.push((labels[key] || key) + ': ' + v);
+        });
+        if (interests.length) lines.push('Interests: ' + interests.join(', '));
+        var who = String(data.get('name') || '').trim();
+        var subject = 'Safari enquiry' + (who ? ' — ' + who : '');
+        var body = lines.join('\n') + '\n\nSent from the Ali Safari Kenya website.';
+        window.location.href = 'mailto:' + mailTo + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        errBox.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send My Request';
+        formNote.textContent = 'Your email app is opening with everything filled in — just press send. If nothing happens, email us at ' + mailTo + '.';
+        formNote.classList.remove('hidden');
+        track('form_mailto', {});
+      }
+
       e.preventDefault();
+      if (!configured){ sendByEmailApp(); return; }
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       fetch(endpoint, {
@@ -1604,16 +1638,13 @@ if (window.tailwind) tailwind.config = {
         if (!res.ok) throw new Error('http ' + res.status);
         return res.json().catch(function(){ return {}; });
       }).then(function(data){
-        if (!data || String(data.success) !== 'true') throw new Error('not accepted');
+        if (!data || !(data.ok === true || data.success === true || String(data.success) === 'true')) throw new Error('not accepted');
         success.hidden = false;
         success.scrollIntoView({behavior:'smooth', block:'center'});
         track('form_success', {mode:'fetch'});
       }).catch(function(){
-        errBox.textContent = 'Something went wrong. Please try again, or message us on WhatsApp — link below.';
-        errBox.classList.remove('hidden');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send My Request';
         track('form_error', {});
+        sendByEmailApp();
       });
     });
   }
